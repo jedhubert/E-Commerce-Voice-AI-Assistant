@@ -1,0 +1,15 @@
+livekit-agents>=1.0.0
+livekit-plugins-silero>=1.0.0
+livekit-plugins-groq>=1.0.0
+livekit-plugins-openai>=1.0.0
+faster-whisper>=1.0.0
+pyttsx3>=2.90
+gTTS>=2.5.0
+fastapi>=0.100.0
+uvicorn>=0.22.0
+python-dotenv>=1.0.0
+requests>=2.30.0
+pydub>=0.25.1
+audioop-lts>=0.2.0
+
+

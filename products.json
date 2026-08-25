@@ -1,0 +1,82 @@
+[
+  {
+    "product_id": "PROD-01",
+    "brand": "Noise",
+    "name": "Noise Two Wireless Noise-Canceling Headphones",
+    "category": "Audio",
+    "price": 2999.00,
+    "stock": 42,
+    "in_stock": true,
+    "description": "Over-ear bluetooth headphones by Noise featuring active noise cancellation, 40mm acoustic drivers, and 30-hour battery life."
+  },
+  {
+    "product_id": "PROD-02",
+    "brand": "Noise",
+    "name": "Noise ColorFit Smart Fitness Watch",
+    "category": "Wearables",
+    "price": 3999.00,
+    "stock": 18,
+    "in_stock": true,
+    "description": "Water-resistant Noise smartwatch featuring heart rate monitoring, built-in GPS, sleep tracking, and 1.78-inch AMOLED display."
+  },
+  {
+    "product_id": "PROD-03",
+    "brand": "Keychron",
+    "name": "Keychron K2 Ergonomic Mechanical Keyboard",
+    "category": "Computer Accessories",
+    "price": 2499.00,
+    "stock": 0,
+    "in_stock": false,
+    "description": "Split ergonomic mechanical keyboard by Keychron with hot-swappable Gateron tactile switches, RGB backlighting, and aluminum chassis."
+  },
+  {
+    "product_id": "PROD-04",
+    "brand": "JBL",
+    "name": "JBL Go 3 Portable Bluetooth Speaker",
+    "category": "Audio",
+    "price": 1499.00,
+    "stock": 65,
+    "in_stock": true,
+    "description": "Compact waterproof IPX7 Bluetooth speaker by JBL with punchy deep bass, 12-hour playtime, and dual pairing mode."
+  },
+  {
+    "product_id": "PROD-05",
+    "brand": "LG",
+    "name": "LG UltraFine 4K Ultra HD Monitor 27-inch",
+    "category": "Displays",
+    "price": 18499.00,
+    "stock": 9,
+    "in_stock": true,
+    "description": "27-inch IPS panel monitor by LG with 3840x2160 resolution, 99% sRGB color gamut, HDR400, and USB-C 65W power delivery."
+  },
+  {
+    "product_id": "PROD-06",
+    "brand": "Anker",
+    "name": "Anker PowerExpand 7-in-1 USB-C Multi-Port Hub",
+    "category": "Computer Accessories",
+    "price": 899.00,
+    "stock": 110,
+    "in_stock": true,
+    "description": "7-in-1 USB-C adapter hub by Anker featuring 4K HDMI, 100W Power Delivery pass-through, SD card reader, and 3 USB 3.0 ports."
+  },
+  {
+    "product_id": "PROD-07",
+    "brand": "Belkin",
+    "name": "Belkin BoostCharge Wireless Charging Pad",
+    "category": "Accessories",
+    "price": 599.00,
+    "stock": 0,
+    "in_stock": false,
+    "description": "Fast 15W Qi-certified wireless charger pad by Belkin with LED status indicator and non-slip silicone surface."
+  },
+  {
+    "product_id": "PROD-08",
+    "brand": "Logitech",
+    "name": "Logitech C920 HD Webcam 1080p",
+    "category": "Computer Accessories",
+    "price": 1199.00,
+    "stock": 25,
+    "in_stock": true,
+    "description": "Full HD 1080p streaming webcam by Logitech with dual noise-canceling stereo microphones, auto light correction, and privacy shutter."
+  }
+]
