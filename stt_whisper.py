@@ -12,14 +12,11 @@ from faster_whisper import WhisperModel
 
 logger = logging.getLogger("stt-whisper")
 
-
-
 class WhisperSTT(stt.STT):
     def __init__(self, model_size: Optional[str] = None) -> None:
         super().__init__(capabilities=stt.STTCapabilities(streaming=False, interim_results=False))
         chosen_size = model_size or os.getenv("WHISPER_MODEL_SIZE", "base.en")
         cpu_threads = min(4, os.cpu_count() or 4)
-        # Load local Whisper model on CPU with int8 quantization and multi-threading for max speed & accuracy
         self._model = WhisperModel(
             chosen_size,
             device="cpu",
@@ -34,7 +31,6 @@ class WhisperSTT(stt.STT):
         language: NotGivenOr[str] = NOT_GIVEN,
         conn_options: APIConnectOptions,
     ) -> stt.SpeechEvent:
-        # Combine all audio frames into one and resample to 16kHz mono if needed
         try:
             if isinstance(buffer, rtc.AudioFrame):
                 combined = buffer
@@ -59,7 +55,6 @@ class WhisperSTT(stt.STT):
             resampled_frames = resampler.push(combined) + resampler.flush()
             combined = rtc.combine_audio_frames(resampled_frames)
 
-        # Convert int16 PCM bytes to float32 normalized numpy array
         raw_bytes = bytes(combined.data)
         if not raw_bytes:
             return stt.SpeechEvent(type=stt.SpeechEventType.FINAL_TRANSCRIPT, alternatives=[])
@@ -69,7 +64,6 @@ class WhisperSTT(stt.STT):
         if len(audio_np) < 1600:
             return stt.SpeechEvent(type=stt.SpeechEventType.FINAL_TRANSCRIPT, alternatives=[])
 
-        # Transcribe synchronously inside thread executor
         def _transcribe() -> str:
             segments, _ = self._model.transcribe(
                 audio_np,
@@ -80,7 +74,6 @@ class WhisperSTT(stt.STT):
             )
             raw_text = " ".join([seg.text for seg in segments]).strip()
             
-            # Prune known Whisper silence/subtitle hallucinations
             clean_lower = raw_text.lower().strip(" .,!?")
             hallucinations = {
                 "subtitles by", "thanks for watching",
