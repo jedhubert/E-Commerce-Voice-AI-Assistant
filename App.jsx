@@ -7,7 +7,7 @@ const GET_TOKEN_BASE_URL = 'http://localhost:8000/api/token';
 export default function App() {
   const [isConnected, setIsConnected] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
-  const [agentState, setAgentState] = useState('Disconnected'); // Disconnected, Connecting, Connected, Listening, Speaking
+  const [agentState, setAgentState] = useState('Disconnected');
   const [transcripts, setTranscripts] = useState([
     { sender: 'Aria', text: 'Hello! I am Aria, your AI customer support assistant for India. Click "Start Voice Conversation" or any query template below to begin.', type: 'agent' }
   ]);
@@ -39,7 +39,6 @@ export default function App() {
     setAgentState('Connecting...');
 
     try {
-      // Generate a unique session room name to allow repeated calls on the same page
       const sessionRoomName = `ecommerce-support-room-${Date.now()}`;
       const sessionParticipant = `Customer-${Math.floor(Math.random() * 1000)}`;
 
@@ -49,7 +48,6 @@ export default function App() {
       }
       const data = await res.json();
 
-      // Initialize LiveKit Room
       const room = new Room({
         adaptiveStream: true,
         dynacast: true,
@@ -60,7 +58,6 @@ export default function App() {
 
       roomRef.current = room;
 
-      // Handle audio track subscription
       room.on(RoomEvent.TrackSubscribed, (track, publication, participant) => {
         if (track.kind === Track.Kind.Audio) {
           const element = track.attach();
@@ -74,7 +71,6 @@ export default function App() {
         track.detach().forEach((el) => el.remove());
       });
 
-      // Handle transcription events or data payloads from Aria and User
       room.on(RoomEvent.DataReceived, (payload, participant) => {
         const strData = new TextDecoder().decode(payload);
         try {
@@ -116,17 +112,14 @@ export default function App() {
         cleanupRoom();
       });
 
-      // Connect to LiveKit Server
       await room.connect(data.server_url, data.token);
 
-      // Unlock browser audio context for immediate WebRTC playback
       try {
         await room.startAudio();
       } catch (audioErr) {
         console.warn('Audio unlock notice:', audioErr);
       }
 
-      // Attach any existing audio tracks from remote participants (Aria agent)
       for (const p of room.remoteParticipants.values()) {
         for (const pub of p.trackPublications.values()) {
           if (pub.track && pub.track.kind === Track.Kind.Audio) {
@@ -137,7 +130,6 @@ export default function App() {
         }
       }
 
-      // Enable microphone with WebRTC engine readiness retry
       const enableMicWithRetry = async (retries = 3) => {
         for (let i = 0; i < retries; i++) {
           try {
@@ -208,7 +200,6 @@ export default function App() {
     }
     
     if (activeRoom) {
-      // Slight delay to ensure data channel readiness if newly connected
       setTimeout(() => {
         sendQueryToAgent(activeRoom, promptText);
       }, 600);
@@ -217,7 +208,6 @@ export default function App() {
 
   return (
     <div className="app-container">
-      {/* App Header */}
       <header className="app-header">
         <div className="brand-title">
           <Sparkles className="w-6 h-6 text-indigo-400" />
@@ -230,7 +220,6 @@ export default function App() {
         </div>
       </header>
 
-      {/* Main Voice Interactive Stage */}
       <main className="voice-stage">
         <div className={`orb-container ${agentState.toLowerCase()}`}>
           {isConnected ? <Volume2 className="orb-icon" /> : <MicOff className="orb-icon" />}
@@ -256,7 +245,6 @@ export default function App() {
           )}
         </button>
 
-        {/* Generalized Indian Market Query Templates */}
         <div className="chips-container">
           <button className="chip" onClick={() => handleChipClick("Can you check the status of my recent order?")}>
             <Package size={14} style={{ display: 'inline', marginRight: 6 }} />
@@ -281,7 +269,6 @@ export default function App() {
         </div>
       </main>
 
-      {/* Real-time Transcript Section */}
       <section className="transcript-section">
         <div className="transcript-title">Live Conversation Transcript</div>
         <div className="transcript-log">

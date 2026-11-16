@@ -19,7 +19,6 @@ logger = logging.getLogger("voicebot-server")
 
 app = FastAPI(title="Voicebot Token & Webhook Server")
 
-# Enable CORS for local dev
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -32,7 +31,6 @@ LIVEKIT_API_KEY: str = os.getenv("LIVEKIT_API_KEY", "devkey")
 LIVEKIT_API_SECRET: str = os.getenv("LIVEKIT_API_SECRET", "secret")
 LIVEKIT_URL: str = os.getenv("LIVEKIT_URL", "ws://127.0.0.1:7880")
 
-# In-memory audit log for webhook events
 webhook_events_log: List[Dict[str, Any]] = []
 
 from livekit.api import AccessToken, VideoGrants, WebhookReceiver, TokenVerifier, LiveKitAPI
@@ -53,7 +51,6 @@ async def get_token(
             detail="LiveKit credentials not configured in backend/.env",
         )
 
-    # Default to unique session room name and participant if not specified
     import time
     actual_room = room_name if room_name else f"ecommerce-support-room-{int(time.time() * 1000)}"
     actual_participant = participant_name if participant_name else f"Customer-{int(time.time() % 10000)}"
@@ -72,7 +69,6 @@ async def get_token(
         )
     )
 
-    # Dispatch agent worker into the room using LiveKit API
     try:
         api = LiveKitAPI(LIVEKIT_URL, LIVEKIT_API_KEY, LIVEKIT_API_SECRET)
         dispatch_req = CreateAgentDispatchRequest(agent_name="aria", room=actual_room)
@@ -112,7 +108,6 @@ async def handle_webhook(request: Request, authorization: str = Header(None)) ->
                 "raw": json.loads(body_str),
             }
         else:
-            # Fallback for dev / unauthenticated requests
             parsed = json.loads(body_str) if body_str else {}
             event_data = {
                 "event": parsed.get("event", "unknown_event"),
@@ -137,7 +132,6 @@ async def handle_webhook(request: Request, authorization: str = Header(None)) ->
     logger.info(f"🔔 LiveKit Webhook Event Received: {event_data.get('event')} | Room: {event_data.get('room')} | Participant: {event_data.get('participant')}")
 
     webhook_events_log.append(event_data)
-    # Keep last 50 events
     if len(webhook_events_log) > 50:
         webhook_events_log.pop(0)
 
