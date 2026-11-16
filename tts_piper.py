@@ -38,7 +38,6 @@ class LocalChunkedStream(tts.ChunkedStream):
         if not raw_audio:
             return
 
-        # Check if audio is a valid WAV container starting with RIFF header
         if raw_audio.startswith(b"RIFF"):
             try:
                 with wave.open(io.BytesIO(raw_audio), "rb") as wf:
@@ -51,12 +50,10 @@ class LocalChunkedStream(tts.ChunkedStream):
                 n_channels = default_ch
                 pcm_data = raw_audio
         else:
-            # Direct raw PCM bytes
             framerate = default_rate
             n_channels = default_ch
             pcm_data = raw_audio
 
-        # Initialize the emitter with raw PCM format
         request_id = str(uuid.uuid4())
         output_emitter.initialize(
             request_id=request_id,
@@ -65,7 +62,6 @@ class LocalChunkedStream(tts.ChunkedStream):
             mime_type="audio/pcm",
         )
 
-        # Push the raw PCM bytes to the emitter and finalize input
         if pcm_data:
             output_emitter.push(pcm_data)
         output_emitter.end_input()
@@ -76,14 +72,12 @@ class LocalChunkedStream(tts.ChunkedStream):
         """
         import re
 
-        # Clean text for speech synthesis engines (replace unicode currency symbols & markdown formatting)
         clean_text = text.replace("₹", "Rupees ").replace("Rs.", "Rupees ").replace("rs.", "Rupees ").replace("INR", "Rupees ")
         clean_text = re.sub(r'[\*\#\_`]', '', clean_text)
         clean_text = clean_text.strip()
         if not clean_text:
             return b"", 24000, 1
 
-        # 1. Primary: Direct Win32 SAPI5 COM in-memory stream (~80ms latency, 0-disk-I/O)
         try:
             import pythoncom
             import win32com.client
@@ -91,7 +85,6 @@ class LocalChunkedStream(tts.ChunkedStream):
             pythoncom.CoInitialize()
             voice = win32com.client.Dispatch("SAPI.SpVoice")
             
-            # Select Zira female voice if available for Aria assistant persona
             try:
                 for v in voice.GetVoices():
                     if "zira" in v.GetDescription().lower():
@@ -100,10 +93,9 @@ class LocalChunkedStream(tts.ChunkedStream):
             except Exception:
                 pass
 
-            voice.Rate = 1  # Natural conversational speech pace
+            voice.Rate = 1
             stream = win32com.client.Dispatch("SAPI.SpMemoryStream")
             
-            # Explicitly set 24kHz 16-bit Mono format (SAFT24kHz16BitMono = 22)
             try:
                 fmt = win32com.client.Dispatch("SAPI.SpAudioFormat")
                 fmt.Type = 22
@@ -122,7 +114,6 @@ class LocalChunkedStream(tts.ChunkedStream):
         except Exception as sapi_err:
             print("Direct SAPI5 in-memory synthesis warning:", sapi_err)
 
-        # 2. Fallback: pyttsx3 engine
         try:
             import pythoncom
             pythoncom.CoInitialize()
@@ -151,7 +142,6 @@ class LocalChunkedStream(tts.ChunkedStream):
         except Exception as local_err:
             print("Local pyttsx3 synthesis warning:", local_err)
 
-        # 3. Fallback: gTTS
         try:
             from gtts import gTTS
             import io as _io
